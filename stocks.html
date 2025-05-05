@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Market - INST377</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+    <style>
+        table {
+            width: 70%;
+            margin: 30px auto;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f7f7f7;
+        }
+        .sentiment-icon {
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Stock Market Insights</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="stocks.html">Stock Market</a>
+            <a href="dogs.html">Cute Dogs</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Track Your Favorite Stocks</h2>
+        <input type="text" id="stockTicker" placeholder="Enter Ticker Symbol (e.g. AAPL)">
+        <select id="range">
+            <option value="30">Last 30 Days</option>
+            <option value="60">Last 60 Days</option>
+            <option value="90">Last 90 Days</option>
+        </select>
+        <button class="action-btn">Get Stock Data</button>
+        <canvas id="stockChart" width="700" height="400"></canvas>
+
+        <section class="reddit-stocks">
+            <h3>Trending Stocks on Reddit</h3>
+            <table id="redditTable">
+                <thead>
+                    <tr>
+                        <th>Ticker</th>
+                        <th>Comments</th>
+                        <th>Sentiment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be populated here -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
