@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Activities - INST377</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Welcome to INST377 Activities</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="stocks.html">Stocks</a>
+            <a href="dogs.html">Dogs</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="intro">
+            <h2>Choose Your Adventure</h2>
+            <button class="action-btn" onclick="window.location.href='stocks.html'">Stock Market</button>
+            <button class="action-btn" onclick="window.location.href='dogs.html'">Cute Dogs</button>
+        </section>
+
+        <section class="quote-section">
+            <p><strong>Random Quote:</strong> <span id="quoteText">Loading...</span></p>
+        </section>
+
+        <section class="voice-section">
+            <h3>Voice Control Features</h3>
+            <p>Try saying "Go to home", "Change color to blue", or "What's the news?"</p>
+            <button class="action-btn" onclick="startListening()">Activate Voice</button>
+            <button class="action-btn" onclick="stopListening()">Deactivate Voice</button>
+        </section>
+    </main>
+</body>
+</html>
