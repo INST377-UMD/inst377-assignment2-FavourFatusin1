@@ -1,36 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Random Dogs - INST377</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-slider/1.0.0/simple-slider.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Dogs | Class Activities</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/simple-slider@1.0.2/dist/simpleslider.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      transition: background-color 0.3s;
+      background-color: #f0f0f0; /* Light grey background color */
+    }
+    .navbar {
+      display: flex;
+      background-color: #333;
+      padding: 10px;
+    }
+    .navbar li {
+      list-style: none;
+      margin-right: 20px;
+    }
+    .navbar li a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 8px 12px;
+      display: inline-block;
+      cursor: pointer;
+    }
+    .navbar li:hover {
+      background-color: #555;
+      border-radius: 4px;
+    }
+    .custom-btn {
+      background: #667eea;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      margin: 5px;
+      cursor: pointer;
+    }
+    #breedInfo {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      background: #f9f9f9;
+      display: none;
+    }
+    #dogCarousel img {
+      height: 200px;
+      margin: 5px;
+    }
+    .audio-box {
+      border-top: 2px dashed #aaa;
+      padding: 15px;
+      margin-top: 20px;
+      background: #f4f4f4;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Dog Gallery</h1>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="stocks.html">Stock Market</a>
-            <a href="dogs.html">Random Dogs</a>
-        </nav>
-    </header>
+  <nav>
+    <ul class="navbar">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="stocks.html">Stocks</a></li>
+      <li><a href="dogs.html">Dogs</a></li>
+    </ul>
+  </nav>
 
-    <main>
-        <section>
-            <h2>Enjoy Some Cute Dog Photos</h2>
-            <div id="dogCarousel" class="carousel"></div>
-        </section>
+  <h2>Dog Gallery</h2>
+  <div id="dogCarousel"></div>
+  <h3>Dog Breeds</h3>
+  <div id="breedButtons"></div>
+  <div id="breedInfo"></div>
 
-        <section>
-            <h2>Explore Dog Breeds</h2>
-            <div id="breedButtons"></div>
-        </section>
+  <div class="audio-box">
+    <h3>Audio Commands</h3>
+    <p>Say "Hello"</p>
+    <p>Say "Change the color to red/blue/etc."</p>
+    <p>Say "Navigate to stocks/dogs/home"</p>
+    <p>Say "Load dog breed Labrador"</p>
+    <button onclick="annyang.start()">Enable Voice Commands</button>
+    <button onclick="annyang.abort()">Disable Voice Commands</button>
+  </div>
 
-        <section id="breedInfo" style="display:none;" class="breed-info"></section>
-    </main>
+  <script>
+    fetch('https://dog.ceo/api/breeds/image/random/10')
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('dogCarousel');
+        data.message.forEach(url => {
+          const img = document.createElement('img');
+          img.src = url;
+          container.appendChild(img);
+        });
+        simpleslider.getSlider();
+      });
 
-    <script src="script.js"></script>
+    fetch('https://api.thedogapi.com/v1/breeds')
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('breedButtons');
+        const selectedBreeds = data.slice(0, 10); // Limit to 10 breeds
+        selectedBreeds.forEach(breed => {
+          const btn = document.createElement('button');
+          btn.className = 'custom-btn';
+          btn.textContent = breed.name;
+          btn.onclick = () => showBreedInfo(breed);
+          container.appendChild(btn);
+        });
+      });
+
+    function showBreedInfo(breed) {
+      const div = document.getElementById('breedInfo');
+      div.innerHTML = `<h4>${breed.name}</h4>
+        <p><strong>Description:</strong> ${breed.temperament || 'N/A'}</p>
+        <p><strong>Min Life:</strong> ${breed.life_span?.split('–')[0] || 'N/A'} years</p>
+        <p><strong>Max Life:</strong> ${breed.life_span?.split('–')[1] || breed.life_span || 'N/A'} years</p>`;
+      div.style.display = 'block';
+    }
+
+    if (annyang) {
+      const commands = {
+        'hello': () => alert('Hello World!'),
+        'change the color to *color': color => document.body.style.backgroundColor = color,
+        'navigate to *page': page => {
+          page = page.toLowerCase();
+          if (page === 'home') location.href = 'index.html';
+          else if (page === 'stocks') location.href = 'stocks.html';
+          else if (page === 'dogs') location.href = 'dogs.html';
+        },
+        'load dog breed *breed': breedName => {
+          fetch('https://api.thedogapi.com/v1/breeds')
+            .then(res => res.json())
+            .then(data => {
+              const match = data.find(b => b.name.toLowerCase() === breedName.toLowerCase());
+              if (match) showBreedInfo(match);
+            });
+        }
+      };
+      annyang.addCommands(commands);
+      annyang.start();
+    }
+  </script>
 </body>
 </html>
