@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>INST377 - Fun Activities</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <header>
+    <h1>INST377 Activities Hub</h1>
+    <nav>
+      <ul class="main-nav">
+        <li><a href="index.html" aria-label="Go to Home Page">Home</a></li>
+        <li><a href="stocks.html" aria-label="Go to Stocks Page">Stocks</a></li>
+        <li><a href="dogs.html" aria-label="Go to Dogs Page">Dogs</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="mainSection">
+    <section class="intro-section">
+      <h2>Explore These Exciting Activities</h2>
+      <div class="navigation-buttons">
+        <button class="nav-btn" onclick="location.href='stocks.html'">Visit Stocks</button>
+        <button class="nav-btn" onclick="location.href='dogs.html'">Check Out Dogs</button>
+      </div>
+    </section>
+
+    <section class="quote-container" aria-live="polite">
+      <h3>Quote of the Moment</h3>
+      <blockquote id="quoteDisplay">Loading...</blockquote>
+    </section>
+
+    <section class="voice-control-area">
+      <h3>Voice Command Controls</h3>
+      <p>Try saying: <em>"navigate to home"</em>, <em>"change color to green"</em>, or just <em>"hello"</em>.</p>
+      <div class="voice-buttons">
+        <button class="voice-btn" type="button" onclick="startListening()">Enable Voice</button>
+        <button class="voice-btn" type="button" onclick="stopListening()">Disable Voice</button>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

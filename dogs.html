@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>INST377 - Dogs</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      /* Quick minimal style for breed images inside breedInfo */
+      #breedInfo img {
+        width: 200px;
+        height: 150px;
+        object-fit: cover;
+        margin: 5px;
+        border-radius: 8px;
+      }
+      .breed-button {
+        margin: 5px;
+        padding: 8px 16px;
+        background-color: #5a9;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+      }
+      .breed-button:hover {
+        background-color: #48a;
+      }
+      #dogCarousel img {
+        width: 300px;
+        height: 200px;
+        object-fit: cover;
+        margin: 5px;
+        border-radius: 10px;
+      }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>INST377 - Dogs</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="stocks.html">Stocks</a>
+            <a href="dogs.html">Dogs</a>
+        </nav>
+    </header>
+
+    <main>
+      <section>
+        <h2>Random Dogs Carousel</h2>
+        <div id="dogCarousel" class="slider"></div>
+      </section>
+
+      <section>
+        <h2>Dog Breeds</h2>
+        <div id="breedButtons"></div>
+      </section>
+
+      <section>
+        <div id="breedInfo" style="display:none;" class="breed-container"></div>
+      </section>
+    </main>
+
+    <script>
+      const dogCarousel = document.getElementById('dogCarousel');
+      const breedButtonsContainer = document.getElementById('breedButtons');
+      const breedInfoDiv = document.getElementById('breedInfo');
+
+      function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      }
+
+      function loadRandomDogs() {
+        fetch('https://dog.ceo/api/breeds/image/random/5')
+          .then(res => res.json())
+          .then(data => {
+            dogCarousel.innerHTML = '';
+            data.message.forEach(url => {
+              const img = document.createElement('img');
+              img.src = url;
+              img.alt = 'Random Dog';
+              dogCarousel.appendChild(img);
+            });
+          })
+          .catch(() => {
+            dogCarousel.innerHTML = '<p>Failed to load dog images.</p>';
+          });
+      }
+
+      // 15 breeds with Dog CEO API correct naming (breed or breed/subbreed)
+      const selectedBreeds = [
+        'beagle',
+        'bulldog/french',
+        'chihuahua',
+        'dalmatian',
+        'doberman',
+        'bulldog/english',
+        'germanshepherd',
+        'retriever/golden',
+        'husky',
+        'labrador',
+        'pug',
+        'rottweiler',
+        'shiba',
+        'shih-tzu',
+        'terrier/yorkshire'
+      ];
+
+      function loadBreedButtons() {
+        breedButtonsContainer.innerHTML = '';
+
+        selectedBreeds.forEach(breed => {
+          // prettify button label by splitting at slash and capitalizing
+          const displayName = breed.split('/').map(capitalize).join(' ');
+          const button = document.createElement('button');
+          button.textContent = displayName;
+          button.classList.add('breed-button');
+          button.addEventListener('click', () => showBreedImages(breed));
+          breedButtonsContainer.appendChild(button);
+        });
+      }
+
+      function showBreedImages(breed) {
+        breedInfoDiv.style.display = 'block';
+        breedInfoDiv.innerHTML = '<p>Loading images...</p>';
+
+        fetch(`https://dog.ceo/api/breed/${breed}/images/random/3`)
+          .then(res => res.json())
+          .then(data => {
+            const displayName = breed.split('/').map(capitalize).join(' ');
+            breedInfoDiv.innerHTML = `<h3>${displayName}</h3>`;
+            data.message.forEach(url => {
+              const img = document.createElement('img');
+              img.src = url;
+              img.alt = `${displayName} image`;
+              breedInfoDiv.appendChild(img);
+            });
+          })
+          .catch(() => {
+            breedInfoDiv.innerHTML = '<p>Failed to load breed images.</p>';
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        loadRandomDogs();
+        loadBreedButtons();
+      });
+    </script>
+</body>
+</html>
