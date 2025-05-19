@@ -2,269 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Welcome | Fun Activities</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>INST377 - Fun Activities</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/simple-slider@1.0.2/dist/simpleslider.min.js"></script>
-  <style>
-    body {
-      font-family: 'Roboto', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #eaeaea;
-      transition: background-color 0.3s;
-    }
-    nav {
-      background-color: #444;
-      padding: 15px;
-    }
-    nav ul {
-      display: flex;
-      justify-content: space-around;
-      padding: 0;
-      margin: 0;
-    }
-    nav li {
-      list-style-type: none;
-    }
-    nav a {
-      text-decoration: none;
-      color: #fff;
-      font-weight: bold;
-      padding: 8px 16px;
-      display: inline-block;
-      cursor: pointer;
-      border-radius: 4px;
-      transition: background-color 0.3s;
-    }
-    nav a:hover {
-      background-color: #666;
-    }
-    .action-btn {
-      background: linear-gradient(90deg, #4e73df, #224abe);
-      color: white;
-      padding: 14px 28px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 18px;
-      transition: background 0.4s;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    }
-    .action-btn:hover {
-      background: linear-gradient(90deg, #1e5cb8, #2a4388);
-    }
-    .audio-container {
-      background: #f9f9f9;
-      border-top: 3px solid #ddd;
-      padding: 20px;
-      margin-top: 25px;
-    }
-    .quote-container {
-      text-align: center;
-      margin: 20px 0;
-    }
-    #chartCanvas {
-      max-width: 100%;
-      height: auto;
-      margin-top: 30px;
-    }
-    #dogImages {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
-      margin-top: 30px;
-    }
-    #dogImages img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    .dog-breed-buttons {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      margin-top: 20px;
-    }
-    .dog-breed-buttons button {
-      background: #f47373;
-      color: white;
-      padding: 10px 22px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .dog-breed-buttons button:hover {
-      background: #ff2e2e;
-    }
-  </style>
+  <script defer src="script.js"></script>
 </head>
 <body>
-  <nav>
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a onclick="showStocks()">Stocks</a></li>
-      <li><a onclick="showDogs()">Dogs</a></li>
-    </ul>
-  </nav>
+  <header>
+    <h1>INST377 Activities Hub</h1>
+    <nav>
+      <ul class="main-nav">
+        <li><a href="index.html" aria-label="Go to Home Page">Home</a></li>
+        <li><a href="stocks.html" aria-label="Go to Stocks Page">Stocks</a></li>
+        <li><a href="dogs.html" aria-label="Go to Dogs Page">Dogs</a></li>
+      </ul>
+    </nav>
+  </header>
 
-  <div class="quote-container">
-    <h1>Discover Exciting Activities!</h1>
-    <button class="action-btn" onclick="showStocks()">Explore Stocks</button>
-    <button class="action-btn" onclick="showDogs()">View Dogs</button>
-    <h3>Inspiring Quote:</h3>
-    <p id="quoteText"></p>
-  </div>
+  <main id="mainSection">
+    <section class="intro-section">
+      <h2>Explore These Exciting Activities</h2>
+      <div class="navigation-buttons">
+        <button class="nav-btn" onclick="location.href='stocks.html'">Visit Stocks</button>
+        <button class="nav-btn" onclick="location.href='dogs.html'">Check Out Dogs</button>
+      </div>
+    </section>
 
-  <div id="stocksSection"></div>
-  <div id="dogsSection"></div>
+    <section class="quote-container" aria-live="polite">
+      <h3>Quote of the Moment</h3>
+      <blockquote id="quoteDisplay">Loading...</blockquote>
+    </section>
 
-  <div class="audio-container">
-    <h3>Voice Commands</h3>
-    <p>Say "Hello" to get a greeting!</p>
-    <p>Say "Change the color to red/blue" to adjust the background color.</p>
-    <p>Say "Navigate to stocks/dogs/home" to go to different sections.</p>
-    <p>Say "Lookup MSFT" to see a stock chart.</p>
-    <p>Say "Load Dog Breed Labrador" to explore breed details.</p>
-    <button onclick="annyang.start()">Enable Voice Commands</button>
-    <button onclick="annyang.abort()">Disable Listening</button>
-  </div>
-
-  <script>
-    function fetchQuote() {
-      fetch('https://zenquotes.io/api/random')
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById('quoteText').innerText = `"${data[0].q}" — ${data[0].a}`;
-        });
-    }
-
-    if (annyang) {
-      const voiceCommands = {
-        'hello': () => alert('Hello World!'),
-        'change the color to *color': color => document.body.style.backgroundColor = color,
-        'navigate to *page': page => {
-          page = page.toLowerCase();
-          if (page === 'home') location.href = 'index.html';
-          else if (page === 'stocks') showStocks();
-          else if (page === 'dogs') showDogs();
-        },
-        'lookup *symbol': symbol => {
-          document.getElementById('stockInput').value = symbol.toUpperCase();
-          document.getElementById('dateRange').value = '30';
-          fetchStockChart();
-        },
-        'load dog breed *breed': breed => fetchDogBreedInfo(breed)
-      };
-      annyang.addCommands(voiceCommands);
-    }
-
-    const apiKey = 'YOUR_POLYGON_API_KEY';
-
-    function showStocks() {
-      document.getElementById('stocksSection').innerHTML = `
-        <h2>Stock Market Chart</h2>
-        <input id="stockInput" placeholder="Enter Stock Ticker (e.g. AAPL)" />
-        <select id="dateRange">
-          <option value="30">30 Days</option>
-          <option value="60">60 Days</option>
-          <option value="90">90 Days</option>
-        </select>
-        <button class="action-btn" onclick="fetchStockChart()">Lookup</button>
-        <canvas id="chartCanvas"></canvas>
-      `;
-      loadRedditStocks();
-    }
-
-    async function fetchStockChart() {
-      const symbol = document.getElementById('stockInput').value.toUpperCase();
-      const range = document.getElementById('dateRange').value;
-      const end = new Date();
-      const start = new Date(end - range * 24 * 60 * 60 * 1000);
-      const from = start.toISOString().split('T')[0];
-      const to = end.toISOString().split('T')[0];
-
-      const url = `https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/day/${from}/${to}?adjusted=true&sort=asc&limit=${range}&apiKey=${apiKey}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      const labels = data.results.map(d => new Date(d.t).toLocaleDateString());
-      const closePrices = data.results.map(d => d.c);
-
-      const ctx = document.getElementById('chartCanvas').getContext('2d');
-      if (window.stockChart) window.stockChart.destroy();
-      window.stockChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: `${symbol} Closing Prices`,
-            data: closePrices,
-            borderColor: '#2980b9',
-            fill: false,
-            tension: 0.1
-          }]
-        }
-      });
-    }
-
-    async function loadRedditStocks() {
-      const res = await fetch('https://tradestie.com/api/v1/apps/reddit?date=2022-04-03');
-      const data = await res.json();
-      const top5 = data.slice(0, 5);
-      const tableBody = document.querySelector('#redditTable tbody');
-      tableBody.innerHTML = '';
-      top5.forEach(stock => {
-        const row = document.createElement('tr');
-        const iconUrl = stock.sentiment === 'Bullish' ? 
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Bull_icon.svg/32px-Bull_icon.svg.png' : 
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Bear_icon.svg/32px-Bear_icon.svg.png';
-        row.innerHTML = `
-          <td><a href="https://finance.yahoo.com/quote/${stock.ticker}" target="_blank">${stock.ticker}</a></td>
-          <td>${stock.no_of_comments}</td>
-          <td><img src="${iconUrl}" alt="${stock.sentiment}" class="${stock.sentiment.toLowerCase()}-icon" title="${stock.sentiment}" /></td>`;
-        tableBody.appendChild(row);
-      });
-    }
-
-    function showDogs() {
-      document.getElementById('dogsSection').innerHTML = `
-        <h2>Dog Image Gallery</h2>
-        <div id="dogImages"></div>
-        <h3>Explore Dog Breeds</h3>
-        <div class="dog-breed-buttons"></div>
-        <div id="breedDetails"></div>
-      `;
-      loadDogImages();
-      loadDogBreeds();
-    }
-
-    function loadDogImages() {
-      fetch('https://dog.ceo/api/breeds/image/random/10')
-        .then(res => res.json())
-        .then(data => {
-          const container = document.getElementById('dogImages');
-          container.innerHTML = '';
-          data.message.forEach(url => {
-            const img = document.createElement('img');
-            img.src = url;
-            container.appendChild(img);
-          });
-        });
-    }
-
-    function loadDogBreeds() {
-      fetch('https://api.thedogapi.com/v1/breeds')
-        .then(res => res.json())
-        .then(data => {
-          const buttonContainer = document.querySelector('.dog-breed-buttons');
-          buttonContainer.innerHTML = '';
-          data.slice(0, 10).forEach(breed => {
-            const breedButton = document.createElement('button');
-            breedButton.textContent = breed.name;
-            breedButton.onclick = () => displayBreedInfo(breed);
-            buttonContainer.appendChild(breedButton);
-          });
+    <section class="voice-control-area">
+      <h3>Voice Command Controls</h3>
+      <p>Try saying: <em>"navigate to home"</em>, <em>"change color to green"</em>, or just <em>"hello"</em>.</p>
+      <div class="voice-buttons">
+        <button class="voice-btn" type="button" onclick="startListening()">Enable Voice</button>
+        <button class="voice-btn" type="button" onclick="stopListening()">Disable Voice</button>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
